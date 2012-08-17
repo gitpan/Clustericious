@@ -6,12 +6,7 @@ Clustericious -- A framework for RESTful processing systems.
 
 =head1 SYNPOSIS
 
-    clustericious generate mbd_app Musicrest --schema schema.sql
-
-    cd Musicrest
-    cpanm .
-    ./Build dbinstall
-    ./bin/musicrest get /
+    clustericious generate mbd_app Myapp --schema schema.sql
 
 =head1 DESCRIPTION
 
@@ -37,14 +32,18 @@ clients.
 - Uses L<Clustericious::Log> for logging.
 
 - Integrates with L<Module::Build::Database> and L<Rose::Planter>
-to provide a basic CRUD interface to a database backends.
+to provide a basic RESTful CRUD interface to a database.
 
 - Provides 'stop' and 'start' commands, and high-level configuration
 facilities for a variety of deployment options.
 
 =cut
 
-our $VERSION = '0.9901';
+our $VERSION = '0.9902';
+
+=head1 TODO
+
+Lots more documentation.
 
 =head1 NOTES
 
@@ -52,7 +51,12 @@ This is a beta release.  The API is subject to change without notice.
 
 =head1 SEE ALSO
 
-L<Clustericious::App>.  L<Clustericious>
+L<Clustericious::App>,
+L<Clustericious>,
+L<Clustericious::Routebuilder::CRUD>,
+L<Clustericious::RouteBuilder::Search>,
+L<Clustericious::RouteBuilder::Common>
+L<Clustericious::Command::start>
 
 =cut
 

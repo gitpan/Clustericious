@@ -1,4 +1,4 @@
-package Clustericious::Command::generate::mbd_app;
+package Clustericious::Command::generate::client;
 
 use strict;
 use warnings;
@@ -9,13 +9,13 @@ use File::Find;
 use File::Slurp 'slurp';
 use File::ShareDir 'dist_dir';
 use File::Basename qw/basename/;
-  
+
 has description => <<'EOF';
-Generate Clustericious app based on Module::Build::Database.
+Generate Clustericious::Client-derived client.
 EOF
 
 has usage => <<"EOF";
-usage: $0 generate mbd_app [NAME]
+usage: $0 generate client [NAME]
 EOF
 
 sub get_data
@@ -48,22 +48,17 @@ sub run
     my ($self, $class, @args ) = @_;
     $class ||= 'MyClustericiousApp';
     if (@args % 2) {
-        die "usage : $0 generate mbd_app <name> --schema <schema>.sql\n";
+        die "usage : $0 generate client <app_name>\n";
     }
     my %args = @args;
 
-    my $templatedir = dist_dir('Clustericious') . "/MbdAppTemplate";
+    my $templatedir = dist_dir('Clustericious') . "/ClientTemplate";
 
-    die "Can't find template.\n" unless -d $templatedir;
+    die "Can't find template in $templatedir.\n" unless -d $templatedir;
 
     find({wanted => sub { $self->_installfile($templatedir, $_, $class) if -f },
           no_chdir => 1}, $templatedir);
 
-    if (my $schema = $args{'--schema'}) {
-        my $content = slurp $schema;
-        my $base = basename $schema;
-        $self->write_file("$class/db/patches/0020_$base", $content);
-    }
 }
 
 1;
