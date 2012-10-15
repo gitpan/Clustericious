@@ -58,6 +58,7 @@ share/MbdAppTemplate/t/001_basic.t
 share/MbdAppTemplate/t/999_pod.t
 share/MbdAppTemplate/t/999_pod_coverage.t
 share/MbdAppTemplate/t/999_stop_db.t
+t/api_table.t
 t/app.t
 t/auth.t
 t/basic.t
@@ -65,6 +66,7 @@ t/config.t
 t/crud.t
 t/generate.t
 t/plugin_datahandler.t
+t/plugin_simpleauth.t
 t/pod.t
 t/proxy.t
 t/test.t

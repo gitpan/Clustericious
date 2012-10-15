@@ -6,8 +6,6 @@ Clustericious::App -- base class for clustericious apps
 
 Inherits from Mojolicious, add adds the following functionality :
 
-=over
-
 =cut
 
 package Clustericious::App;
@@ -24,12 +22,15 @@ use Mojo::URL;
 use JSON::XS;
 use Scalar::Util qw/weaken/;
 use Mojo::Base 'Mojolicious';
+use File::HomeDir ();
 
 use Clustericious::Controller;
 use Clustericious::Renderer;
 use Clustericious::RouteBuilder::Common;
 use Clustericious::Config;
 use Clustericious::Commands;
+
+
 
 has commands => sub {
   my $commands = Clustericious::Commands->new(app => shift);
@@ -42,7 +43,7 @@ use strict;
 
 our @Confdirs = $ENV{TEST_HARNESS} ?
    ($ENV{CLUSTERICIOUS_TEST_CONF_DIR}) :
-   ($ENV{HOME}, "$ENV{HOME}/etc", "/util/etc", "/etc" );
+   (File::HomeDir->my_home, File::HomeDir->my_home . "/etc", "/util/etc", "/etc" );
 
 {
 no warnings 'redefine';
@@ -54,7 +55,7 @@ sub Math::BigInt::TO_JSON {
 }
 }
 
-=item startup
+=head2 $app-E<gt>startup
 
 Adds the autodata_handler plugin, common routes,
 and sets up logging for the client using log::log4perl.
@@ -142,7 +143,7 @@ sub startup {
     });
 }
 
-=item init_logging
+=head2 $app-E<gt>init_logging
 
 Initializing logging using ~/etc/log4perl.conf
 
@@ -156,7 +157,7 @@ sub init_logging {
     $self->log( $logger );
 }
 
-=item dump_api
+=head2 $app-E<gt>dump_api
 
 Dump out the API for this REST server.
 
@@ -192,6 +193,54 @@ sub dump_api {
     }
     return uniq sort @all;
 }
+
+=head2 $app-E<gt>dump_api_table( $table )
+
+Dump out the column information for the given table.
+
+=cut
+
+sub _dump_api_table_types
+{
+    my($rose_type) = @_;
+    return 'datetime' if $rose_type =~ /^datetime/;
+    state $types = {
+        (map { $_ => 'string' } qw( character text varchar )),
+        (map { $_ => 'numeric' } 'numeric', 'float', 'double precision','decimal'),
+        (map { $_ => $_ } qw( blob set time interval enum bytea chkpass bitfield date boolean )),
+        (map { $_ => 'integer' } qw( bigint integer bigserial serial )),
+        (map { $_ => 'epoch' } 'epoch', 'epoch hires'),
+        (map { $_ => 'timestamp' } 'timestamp', 'timestamp with time zone'),
+    };
+    return $types->{$rose_type} // 'unknown';
+}
+
+sub dump_api_table
+{
+    my($self, $table) = @_;
+    my $class = eval { Rose::Planter->find_class($table) };
+    return unless defined $class;
+
+    return {
+        columns => {
+            map {
+                $_->name => {
+                    rose_db_type => $_->type,
+                    not_null     => $_->not_null,
+                    type         => _dump_api_table_types($_->type),
+                } } $class->meta->columns
+            },
+        primary_key => [
+            map { $_->name } $class->meta->primary_key_columns
+        ],
+    };
+}
+
+=head2 $app-E<gt>config
+
+Returns the config (an instance of L<Clustericious::Config>) for the application.
+
+=cut
 
 sub config {
     my $app = shift;
