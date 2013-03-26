@@ -39,7 +39,7 @@ facilities for a variety of deployment options.
 
 =cut
 
-our $VERSION = '0.9914';
+our $VERSION = '0.9915';
 
 =head1 TODO
 
@@ -53,7 +53,7 @@ This is a beta release.  The API is subject to change without notice.
 
 L<Clustericious::App>,
 L<Clustericious>,
-L<Clustericious::Routebuilder::CRUD>,
+L<Clustericious::RouteBuilder::CRUD>,
 L<Clustericious::RouteBuilder::Search>,
 L<Clustericious::RouteBuilder::Common>
 L<Clustericious::Command::start>
