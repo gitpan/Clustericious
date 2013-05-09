@@ -31,10 +31,13 @@ meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
   version: 1.4
 name: Clustericious
+no_index:
+  directory:
+    - share
 provides:
   Clustericious:
     file: lib/Clustericious.pm
-    version: 0.9916
+    version: 0.9917
   Clustericious::App:
     file: lib/Clustericious/App.pm
   Clustericious::Command:
@@ -94,4 +97,4 @@ requires:
   File::ShareDir: 1.00
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.9916
+version: 0.9917
