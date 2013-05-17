@@ -7,7 +7,7 @@ use base 'Mojolicious::Controller';
 use strict;
 use warnings;
 
-our $VERSION = '0.9919';
+our $VERSION = '0.9920';
 
 sub url_for {
     my $c = shift;
@@ -66,6 +66,16 @@ sub render_not_found {
     my $self = shift;
     undef $self->stash->{autodata} if exists($self->stash->{autodata});
     $self->SUPER::render_not_found(@_);
+}
+
+if($Mojolicious::VERSION >= 4.0)
+{
+    foreach my $type (qw( text json )) {
+        eval qq{
+            sub render_$type { shift->render($type => \@_) };
+        };
+        die $@ if $@;
+    }
 }
 
 1;

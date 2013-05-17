@@ -30,7 +30,7 @@ use Clustericious::RouteBuilder::Common;
 use Clustericious::Config;
 use Clustericious::Commands;
 
-our $VERSION = '0.9919';
+our $VERSION = '0.9920';
 
 sub _have_rose {
     return 1 if Rose::Planter->can("tables");
@@ -103,8 +103,11 @@ sub startup {
     $self->plugin('TagHelpers');
     $self->plugin('EPLRenderer');
     $self->plugin('EPRenderer');
-    $self->plugin('RequestTimer');
-    $self->plugin('PoweredBy');
+    if($Mojolicious::VERSION < 4.0) {
+        # removed from mojo 4.0
+        $self->plugin('RequestTimer');
+        $self->plugin('PoweredBy');
+    }
 
     # Helpers
     if (my $base = $config->url_base(default => '')) {
