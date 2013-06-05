@@ -1,6 +1,6 @@
 =head1 NAME
 
-Clustericious::RouteBuilder::Search -- build routes for searching for objects
+Clustericious::RouteBuilder::Search - build routes for searching for objects
 
 =head1 SYNOPSIS
 
@@ -31,6 +31,14 @@ Additionally a "mode" parameters is suported, which just calls a
 search_$mode method within the manager class, and returns that
 resultset to the client.
 
+=head1 SUPER CLASS
+
+none
+
+=head1 SEE ALSO
+
+L<Clustericious>
+
 =cut
 
 package Clustericious::RouteBuilder::Search;
@@ -40,7 +48,7 @@ use List::MoreUtils qw/uniq/;
 use Data::Dumper;
 use strict;
 
-our $VERSION = '0.9921';
+our $VERSION = '0.9922';
 
 use Sub::Exporter -setup => {
     exports => [

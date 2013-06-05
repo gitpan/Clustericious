@@ -11,7 +11,7 @@ use Mojo::Base 'Mojolicious::Plugin';
 use warnings;
 use strict;
 
-our $VERSION = '0.9921';
+our $VERSION = '0.9922';
 
 =head1 NAME
 
@@ -226,7 +226,7 @@ sub skip_auth {
 
 =head1 SEE ALSO
 
-L<PlugAuth>
+L<PlugAuth>, L<Clustericious>
 
 =cut
 

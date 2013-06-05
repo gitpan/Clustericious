@@ -1,14 +1,22 @@
 =head1 NAME
 
-Clustericious::Command::Plackup
+Clustericious::Command::Plackup - Clustericious command to start plack server
+
+=head1 SYNOPSIS
+
+ % yourapp start
 
 =head1 DESCRIPTION
 
 Start a plack server using plackup.
 
+=head1 SUPER CLASS
+
+L<Clustericious::Command>
+
 =head1 SEE ALSO
 
-plackup, Plack
+L<Clustericious>, L<plackup>, L<Plack>
 
 =cut
 
@@ -17,12 +25,12 @@ use Clustericious::Log;
 
 use Clustericious::App;
 use Mojo::Server::PSGI;
-use base 'Mojolicious::Command';
+use base 'Clustericious::Command';
 
 use strict;
 use warnings;
 
-our $VERSION = '0.9921';
+our $VERSION = '0.9922';
 
 __PACKAGE__->attr(description => <<EOT);
 Start a plack server (see plackup)

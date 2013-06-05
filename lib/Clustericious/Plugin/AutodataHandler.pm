@@ -2,9 +2,18 @@ package Clustericious::Plugin::AutodataHandler;
 
 =head1 NAME
 
-Clustericious::Plugin::DataHandler -- Handle data types automatically
+Clustericious::Plugin::DataHandler - Handle data types automatically
 
 =head1 SYNOPSIS
+
+ package YourApp::Routes;
+ 
+ use Clustericious::RouteBuilder;
+ 
+ get '/some/route' => sub {
+   my $c = shift;
+   $c->{autodata} = { x => 1, y => 'hello, z => [1,2,3] };
+ };
 
 =head1 DESCRIPTION
 
@@ -18,7 +27,7 @@ application/x-www-form-urlencoded (in-bound only).
 
 When parse_autodata is called from within a route like this:
 
-    $self->parse_autodata;
+ $self->parse_autodata;
 
 POSTed data is parsed according to the type in the 'Content-Type'
 header with the data left in stash->{autodata}.  It is also
@@ -54,7 +63,7 @@ use YAML::XS qw/Dump Load/;
 
 use Clustericious::Log;
 
-our $VERSION = '0.9921';
+our $VERSION = '0.9922';
 
 my $default_decode = 'application/x-www-form-urlencoded';
 my $default_encode = 'application/json';

@@ -2,7 +2,7 @@ package Clustericious::RouteBuilder::CRUD;
 
 =head1 NAME
 
-Clustericious::RouteBuilder::CRUD -- build crud routes easily
+Clustericious::RouteBuilder::CRUD - build crud routes easily
 
 =head1 SYNOPSIS
 
@@ -31,9 +31,13 @@ find_class and find_object.
 
 The objects returned by find_object must have a method named as_hash.
 
-=head1 TODO
+=head1 SUPER CLASS
 
-more documentation
+none
+
+=head1 SEE ALSO
+
+L<Clustericious>
 
 =cut
 
@@ -52,7 +56,7 @@ use Sub::Exporter -setup => {
     collectors => ['defaults'],
 };
 
-our $VERSION = '0.9921';
+our $VERSION = '0.9922';
 
 sub _build_create {
     my ($class, $name, $arg, $defaults) = @_;

@@ -1,10 +1,20 @@
 =head1 NAME
 
-Clustericious::App -- base class for clustericious apps
+Clustericious::App - Clustericious app base class
 
+=head1 SYNOPSIS
+
+ use Mojo::Base 'Clustericious::App';
+ 
 =head1 DESCRIPTION
 
-Inherits from Mojolicious, add adds the following functionality :
+This class is the base class for all Clustericious applications.  It
+inherits everything from L<Mojolicious> and adds a few Clustericious
+specific methods documented here.
+
+=head1 SUPER CLASS
+
+L<Mojolicious>
 
 =cut
 
@@ -30,7 +40,7 @@ use Clustericious::RouteBuilder::Common;
 use Clustericious::Config;
 use Clustericious::Commands;
 
-our $VERSION = '0.9921';
+our $VERSION = '0.9922';
 
 sub _have_rose {
     return 1 if Rose::Planter->can("tables");
@@ -58,6 +68,8 @@ sub Math::BigInt::TO_JSON {
     return $i;
 }
 }
+
+=head1 METHODS
 
 =head2 $app-E<gt>startup
 
@@ -276,3 +288,9 @@ sub config {
 }
 
 1;
+
+=head1 SEE ALSO
+
+L<Clustericious>
+
+=cut

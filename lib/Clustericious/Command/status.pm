@@ -1,10 +1,22 @@
 =head1 NAME
 
-Clustericious::Command::status
+Clustericious::Command::status - Clustericious command to report status of Clustericious application
+
+=head1 SYNOPSIS
+
+ % yourapp status
 
 =head1 DESCRIPTION
 
 Report the status of a running clustericious daemon, based on its start_mode.
+
+=head1 SUPER CLASS
+
+L<Clustericious::Command>
+
+=head1 SEE ALSO
+
+L<Clustericious>
 
 =cut
 
@@ -15,12 +27,12 @@ use Mojo::UserAgent;
 use Clustericious::App;
 use Clustericious::Config;
 use File::Basename qw/dirname/;
-use base 'Mojolicious::Command';
+use base 'Clustericious::Command';
 
 use strict;
 use warnings;
 
-our $VERSION = '0.9921';
+our $VERSION = '0.9922';
 
 __PACKAGE__->attr(description => <<'');
 Report the status of a daemon.

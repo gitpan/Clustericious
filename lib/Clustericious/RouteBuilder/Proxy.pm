@@ -2,7 +2,7 @@ package Clustericious::RouteBuilder::Proxy;
 
 =head1 NAME
 
-Clustericious::RouteBuilder::Proxy -- build proxy routes easily
+Clustericious::RouteBuilder::Proxy - build proxy routes easily
 
 =head1 SYNOPSIS
 
@@ -34,9 +34,13 @@ This package provides routes for proxying.  It rewrites
 urls by stripping prefixes, and passes the rest on by
 prepending a given url to the incoming request.
 
-=head1 TODO
+=head1 SUPER CLASS
 
-more documentation
+none
+
+=head1 SEE ALSO
+
+L<Clustericious>
 
 =cut
 
@@ -51,7 +55,7 @@ use Sub::Exporter -setup => {
     collectors => ['defaults'],
 };
 
-our $VERSION = '0.9921';
+our $VERSION = '0.9922';
 
 sub _build_proxy {
     my ( $class, $name, $arg, $defaults ) = @_;
