@@ -3,7 +3,7 @@ package Clustericious::HelloWorld;
 use Mojo::Base 'Clustericious::App';
 use Clustericious::RouteBuilder qw/Clustericious::HelloWorld/;
 
-our $VERSION = '0.9922';
+our $VERSION = '0.9923';
 
 BEGIN {
     $ENV{LOG_LEVEL} = 'FATAL';
@@ -15,7 +15,7 @@ any '/*foo' => {foo => '', text => 'Clustericious is working!'};
 
 =head1 NAME
 
-Clustericious::HelloWorld
+Clustericious::HelloWorld - Clustericious hello world application
 
 =head1 SYNOPSIS
 

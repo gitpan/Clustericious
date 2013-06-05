@@ -1,6 +1,6 @@
 =head1 NAME
 
-Clustericious::Command::Plackup - Clustericious command to start plack server
+Clustericious::Command::plackup - Clustericious command to start plack server
 
 =head1 SYNOPSIS
 
@@ -30,7 +30,7 @@ use base 'Clustericious::Command';
 use strict;
 use warnings;
 
-our $VERSION = '0.9922';
+our $VERSION = '0.9923';
 
 __PACKAGE__->attr(description => <<EOT);
 Start a plack server (see plackup)

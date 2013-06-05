@@ -1,6 +1,6 @@
 =head1 NAME
 
-Clustericious::Command::Hypnotoad - Clustericious command to stat Hypnotoad
+Clustericious::Command::hypnotoad - Clustericious command to stat Hypnotoad
 
 =head1 SYNOPSIS
 
@@ -52,7 +52,7 @@ use base 'Clustericious::Command';
 use strict;
 use warnings;
 
-our $VERSION = '0.9922';
+our $VERSION = '0.9923';
 
 __PACKAGE__->attr(description => "Start a hypnotad web server.\n");
 
