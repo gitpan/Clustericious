@@ -1,5 +1,8 @@
 Revision history for Clustericious
 
+0.9924_03Thu Jun 13 16:35:42 EDT 2013
+        - Use PlugAuth::Lite for plugauth testing
+
 0.9924  Thu Jun  6 07:58:50 EDT 2013
         - documentation
 
