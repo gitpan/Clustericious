@@ -2,7 +2,7 @@ package Clustericious::Command;
 
 use Mojo::Base 'Mojolicious::Command';
 
-our $VERSION = '0.9924';
+our $VERSION = '0.9924_01';
 
 1;
 
@@ -40,7 +40,7 @@ L<stop|Clustericious::Command::stop>
 
 =item *
 
-L<start|Clustericious::Command::status>
+L<status|Clustericious::Command::status>
 
 =item *
 
