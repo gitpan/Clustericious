@@ -10,7 +10,7 @@ use Mojo::Base 'Mojolicious::Plugin';
 use warnings;
 use strict;
 
-our $VERSION = '0.9924_03';
+our $VERSION = '0.9924_04';
 
 =head1 NAME
 
@@ -83,7 +83,7 @@ sub register {
         WARN "unable to determine PlugAuth URL: $@";
         return $self;
     }
-    #$app->hook(after_dispatch => sub { Clustericious::Plugin::PlugAuth->skip_auth(0) });
+    $app->hook(after_dispatch => sub { Clustericious::Plugin::PlugAuth->skip_auth(0) });
     $self;
 }
 
@@ -100,7 +100,7 @@ sub authenticate {
     my $self = shift;
     my $c = shift;
     my $realm = shift;
-    #return 1 if $self->skip_auth;
+    return 1 if $self->skip_auth;
 
     TRACE ("Authenticating for realm $realm");
     # Everyone needs to send an authorization header
@@ -111,7 +111,7 @@ sub authenticate {
     };
 
     my $config_url = $self->config_url;
-    my $ua = $c->ua;
+    my $ua = $c->auth_ua;
 
     my ($method,$str) = split / /,$auth;
     my $userinfo = b($str)->b64_decode;
@@ -185,7 +185,7 @@ the given action on the given resource.
 sub authorize {
     my $self = shift;
     my $c = shift;
-    #return 1 if $self->skip_auth;
+    return 1 if $self->skip_auth;
     my ($action,$resource) = @_;
     my $user = $c->stash("user") or LOGDIE "missing user in authorize()";
     LOGDIE "missing action or resource in authorize()" unless @_==2;
@@ -193,7 +193,7 @@ sub authorize {
     $resource =~ s[^/][];
     my $url = Mojo::URL->new( join '/', $self->config_url,
         "authz/user", $user, $action, $resource );
-    my $code = $c->ua->head($url)->res->code;
+    my $code = $c->auth_ua->head($url)->res->code;
     return 1 if $code && $code == 200;
     INFO "Unauthorized access by $user to $action $resource";
     if($code == 503) {
@@ -204,22 +204,22 @@ sub authorize {
     return 0;
 }
 
-#=head2 skip_auth
-#
-# Clustericious::Plugin::PlugAuth->skip_auth(1);
-#
-#Set this global flag to bypass authentication and authorization, e.g. during
-#a subequest.  This flag is reset at the end of the dispatch cycle.
-#
-#=cut
+=head2 skip_auth
 
-#sub skip_auth {
-#    state $skip_auth = 0;
-#    my $class = shift;
-#    return $skip_auth unless @_;
-#    $skip_auth = shift;
-#    return $skip_auth;
-#}
+ Clustericious::Plugin::PlugAuth->skip_auth(1);
+
+Set this global flag to bypass authentication and authorization, e.g. during
+a subequest.  This flag is reset at the end of the dispatch cycle.
+
+=cut
+
+sub skip_auth {
+    state $skip_auth = 0;
+    my $class = shift;
+    return $skip_auth unless @_;
+    $skip_auth = shift;
+    return $skip_auth;
+}
 
 =head1 SEE ALSO
 

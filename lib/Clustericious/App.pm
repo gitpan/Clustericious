@@ -40,7 +40,7 @@ use Clustericious::RouteBuilder::Common;
 use Clustericious::Config;
 use Clustericious::Commands;
 
-our $VERSION = '0.9924_03';
+our $VERSION = '0.9924_04';
 
 sub _have_rose {
     return 1 if Rose::Planter->can("tables");
@@ -137,6 +137,8 @@ sub startup {
         $url->query($q);
         $url;
     });
+
+    $self->helper( auth_ua => sub { shift->ua } );
 
     $self->helper( render_moved => sub {
         my $c = shift;

@@ -7,10 +7,7 @@ use Test::Mojo;
 use File::HomeDir::Test;
 use File::HomeDir;
 use YAML::XS qw( DumpFile );
-use Mojo::URL;
-use Mojo::Message::Response;
 use PlugAuth::Lite;
-use Mojo::Server;
 
 $ENV{LOG_LEVEL} = "ERROR";
 
@@ -24,6 +21,7 @@ $auth_ua->app(
     host  => sub { $status->{host}  // die },
   })
 );
+note ".t ua = $auth_ua";
 
 package SomeService;
 
@@ -34,7 +32,7 @@ sub startup
 {
   my $self = shift;
   $self->SUPER::startup;
-  $self->helper(ua => sub { $auth_ua });
+  $self->helper(auth_ua => sub { $auth_ua });
 };
 
 package SomeService::Routes;
@@ -53,7 +51,8 @@ package main;
 my $prefix = 'plug';
 
 my $home = File::HomeDir->my_home;
-my $auth_url = "http://localhost:" . $auth_ua->app_url->port;
+my $auth_url = $auth_ua->app_url->to_string;
+$auth_url =~ s{/$}{};
 mkdir "$home/etc";
 DumpFile("$home/etc/SomeService.conf", {
   "${prefix}_auth" => {
