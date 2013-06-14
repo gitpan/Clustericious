@@ -2,76 +2,53 @@ use strict;
 use warnings;
 use autodie;
 use v5.10;
-use Test::More tests => 30;
+use Test::Clustericious::Config;
+use Test::More tests => 31;
 use Test::Mojo;
-use File::HomeDir::Test;
-use File::HomeDir;
-use YAML::XS qw( DumpFile );
-use PlugAuth::Lite;
+use Test::PlugAuth;
 
 $ENV{LOG_LEVEL} = "ERROR";
 
 my $status = {};
 
-my $auth_ua = Mojo::UserAgent->new;
-$auth_ua->app(
-  PlugAuth::Lite->new({
-    auth  => sub { $status->{auth}  // die },
-    authz => sub { $status->{authz} // die },
-    host  => sub { $status->{host}  // die },
-  })
+my $auth = Test::PlugAuth->new(
+  auth  => sub { $status->{auth}  // die },
+  authz => sub { $status->{authz} // die },
+  host  => sub { $status->{host}  // die },
 );
-note ".t ua = $auth_ua";
 
-package SomeService;
+eval q{
+  package SomeService;
 
-$SomeService::VERSION = '1.1';
-use base 'Clustericious::App';
+  our $VERSION = '1.1';
+  use base 'Clustericious::App';
 
-sub startup
-{
-  my $self = shift;
-  $self->SUPER::startup;
-  $self->helper(auth_ua => sub { $auth_ua });
+  package SomeService::Routes;
+
+  use Clustericious::RouteBuilder;
+
+  get '/' => sub { shift->render_text('hello'); };
+
+  authenticate;
+  authorize;
+
+  get '/private' => sub { shift->render_text('this is private'); };
 };
-
-package SomeService::Routes;
-
-use Clustericious::RouteBuilder;
-
-get '/' => sub { shift->render_text('hello'); };
-
-authenticate;
-authorize;
-
-get '/private' => sub { shift->render_text('this is private'); };
-
-package main;
+die $@ if $@;
 
 my $prefix = 'simple';
 
-my $home = File::HomeDir->my_home;
-my $auth_url = $auth_ua->app_url->to_string;
-$auth_url =~ s{/$}{};
-mkdir "$home/etc";
-DumpFile("$home/etc/SomeService.conf", {
+create_config_ok SomeService => {
   "${prefix}_auth" => {
-    url => $auth_url,
+    url => $auth->url,
   },
-});
-
-note do {
-  local $/;
-  open my $fh, '<', "$home/etc/SomeService.conf";
-  my $data = <$fh>;
-  close $fh;
-  $data;
 };
 
-note "GET $auth_url/auth";
-note $auth_ua->get("$auth_url/auth")->res->to_string;
+#note "GET $auth_url/auth";
+#note $auth_ua->get("$auth_url/auth")->res->to_string;
 
 my $t = Test::Mojo->new("SomeService");
+$auth->apply_to_client_app($t->app);
 
 note ' request 01 ';
 
