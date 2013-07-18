@@ -57,7 +57,7 @@ facilities for a variety of deployment options.
 
 =cut
 
-our $VERSION = '0.9927';
+our $VERSION = '0.9928';
 
 =head1 TODO
 
@@ -66,6 +66,14 @@ Lots more documentation.
 =head1 NOTES
 
 This is a beta release.  The API is subject to change without notice.
+
+=head1 AUTHOR
+
+Graham Ollis <plicease@cpan.org>
+
+Brian Duggan
+
+Curt Tilmes
 
 =head1 SEE ALSO
 

@@ -32,7 +32,7 @@ use base 'Clustericious::Command';
 use strict;
 use warnings;
 
-our $VERSION = '0.9927';
+our $VERSION = '0.9928';
 
 __PACKAGE__->attr(description => <<'');
 Report the status of a daemon.
@@ -78,6 +78,7 @@ sub _check_database {
 
 sub run {
     my $self = shift;
+    exit 2 unless $self->app->sanity_check;
     my @args = @_ ? @_ : @ARGV;
     my $app  = $ENV{MOJO_APP};
     my $conf = Clustericious::Config->new($app);

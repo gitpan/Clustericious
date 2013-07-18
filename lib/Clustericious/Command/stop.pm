@@ -53,7 +53,7 @@ use File::Slurp qw/slurp/;
 use strict;
 use warnings;
 
-our $VERSION = '0.9927';
+our $VERSION = '0.9928';
 
 __PACKAGE__->attr(description => <<EOT);
 Stop a running daemon.
@@ -130,6 +130,7 @@ sub _stop_apache {
 
 sub run {
     my $self     = shift;
+    exit 2 unless $self->app->sanity_check;
     my $conf     = Clustericious::Config->new( $ENV{MOJO_APP} );
 
     Clustericious::App->init_logging();

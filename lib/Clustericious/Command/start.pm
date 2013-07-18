@@ -62,7 +62,7 @@ use Mojo::Base 'Clustericious::Command';
 use strict;
 use warnings;
 
-our $VERSION = '0.9927';
+our $VERSION = '0.9928';
 
 has description => <<EOT;
 Start a daemon using the config file.
@@ -77,6 +77,7 @@ EOT
 
 sub run {
     my $self     = shift;
+    exit 2 unless $self->app->sanity_check;
     my @args = @_ ? @_ : @ARGV;
     my $app  = $ENV{MOJO_APP};
     my $conf     = Clustericious::Config->new( $app );
