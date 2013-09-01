@@ -1,14 +1,26 @@
 package Clustericious::Command;
 
+use strict;
+use warnings;
 use Mojo::Base 'Mojolicious::Command';
 
-our $VERSION = '0.9929';
+# ABSTRACT: Command base class
+our $VERSION = '0.9930'; # VERSION
+
+
 
 1;
+
+__END__
+=pod
 
 =head1 NAME
 
 Clustericious::Command - Command base class
+
+=head1 VERSION
+
+version 0.9930
 
 =head1 SYNOPSIS
 
@@ -59,12 +71,28 @@ L<generate mbd_app|Clustericious::Command::generate::mbd_app>
 =head1 SUPER CLASS
 
 L<Mojolicious::Command>
- 
+
 =head1 SEE ALSO
 
 L<Clustericious>
 L<Mojolicious::Command>
 
-=cut
+=head1 AUTHOR
 
+original author: Brian Duggan
+
+current maintainer: Graham Ollis <plicease@cpan.org>
+
+contributors:
+
+Curt Tilmes
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2013 by NASA GSFC.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
 

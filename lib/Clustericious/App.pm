@@ -1,25 +1,9 @@
-=head1 NAME
-
-Clustericious::App - Clustericious app base class
-
-=head1 SYNOPSIS
-
- use Mojo::Base 'Clustericious::App';
- 
-=head1 DESCRIPTION
-
-This class is the base class for all Clustericious applications.  It
-inherits everything from L<Mojolicious> and adds a few Clustericious
-specific methods documented here.
-
-=head1 SUPER CLASS
-
-L<Mojolicious>
-
-=cut
 
 package Clustericious::App;
 
+use strict;
+use warnings;
+use v5.10;
 use List::Util qw/first/;
 use List::MoreUtils qw/uniq/;
 use MojoX::Log::Log4perl;
@@ -33,7 +17,6 @@ use JSON::XS;
 use Scalar::Util qw/weaken/;
 use Mojo::Base 'Mojolicious';
 use File::HomeDir ();
-
 use Clustericious::Controller;
 use Clustericious::Renderer;
 use Clustericious::RouteBuilder;
@@ -41,21 +24,20 @@ use Clustericious::RouteBuilder::Common;
 use Clustericious::Config;
 use Clustericious::Commands;
 
-our $VERSION = '0.9929';
+# ABSTRACT: Clustericious app base class
+our $VERSION = '0.9930'; # VERSION
+
 
 sub _have_rose {
     return 1 if Rose::Planter->can("tables");
 }
+
 
 has commands => sub {
   my $commands = Clustericious::Commands->new(app => shift);
     weaken $commands->{app};
     return $commands;
 };
-
-use warnings;
-use strict;
-use v5.10;
 
 our @Confdirs = $ENV{TEST_HARNESS} ?
    ($ENV{CLUSTERICIOUS_TEST_CONF_DIR}) :
@@ -71,14 +53,6 @@ sub Math::BigInt::TO_JSON {
 }
 }
 
-=head1 METHODS
-
-=head2 $app-E<gt>startup
-
-Adds the autodata_handler plugin, common routes,
-and sets up logging for the client using log::log4perl.
-
-=cut
 
 sub startup {
     my $self = shift;
@@ -115,10 +89,8 @@ sub startup {
 
     my $r = $self->routes;
     # "Common" ones are not overrideable.
-    Clustericious::RouteBuilder::Common->add_routes($self);
-    Clustericious::RouteBuilder->add_routes($self, $auth_plugin);
-    # "default" ones are :
-    # Clustericious::RouteBuilder::Default->add_routes($self);
+    Clustericious::RouteBuilder::Common->_add_routes($self);
+    Clustericious::RouteBuilder->_add_routes($self, $auth_plugin);
 
     $self->plugin('AutodataHandler');
     $self->plugin('DefaultHelpers');
@@ -189,11 +161,6 @@ sub startup {
 
 }
 
-=head2 $app-E<gt>init_logging
-
-Initializing logging using ~/etc/log4perl.conf
-
-=cut
 
 sub init_logging {
     my $self = shift;
@@ -203,11 +170,6 @@ sub init_logging {
     $self->log( $logger );
 }
 
-=head2 $app-E<gt>dump_api
-
-Dump out the API for this REST server.
-
-=cut
 
 sub dump_api {
     my $self = shift;
@@ -240,11 +202,6 @@ sub dump_api {
     return uniq sort @all;
 }
 
-=head2 $app-E<gt>dump_api_table( $table )
-
-Dump out the column information for the given table.
-
-=cut
 
 sub _dump_api_table_types
 {
@@ -283,11 +240,6 @@ sub dump_api_table
     };
 }
 
-=head2 $app-E<gt>config
-
-Returns the config (an instance of L<Clustericious::Config>) for the application.
-
-=cut
 
 sub config {
     my $app = shift;
@@ -298,6 +250,7 @@ sub config {
         $app->_clustericious_config(@_);
     }
 }
+
 
 sub sanity_check
 {
@@ -315,8 +268,97 @@ sub sanity_check
 
 1;
 
+
+__END__
+=pod
+
+=head1 NAME
+
+Clustericious::App - Clustericious app base class
+
+=head1 VERSION
+
+version 0.9930
+
+=head1 SYNOPSIS
+
+ use Mojo::Base 'Clustericious::App';
+
+=head1 DESCRIPTION
+
+This class is the base class for all Clustericious applications.  It
+inherits everything from L<Mojolicious> and adds a few Clustericious
+specific methods documented here.
+
+=head1 SUPER CLASS
+
+L<Mojolicious>
+
+=head1 ATTRIBUTES
+
+=head2 commands
+
+An instance of L<Clustericious::Commands> for use with this application.
+
+=head1 METHODS
+
+=head2 $app-E<gt>startup
+
+Adds the autodata_handler plugin, common routes,
+and sets up logging for the client using log::log4perl.
+
+=head2 $app-E<gt>init_logging
+
+Initializing logging using ~/etc/log4perl.conf
+
+=head2 $app-E<gt>dump_api
+
+Dump out the API for this REST server.
+
+=head2 $app-E<gt>dump_api_table( $table )
+
+Dump out the column information for the given table.
+
+=head2 $app-E<gt>config
+
+Returns the config (an instance of L<Clustericious::Config>) for the application.
+
+=head2 $app-E<gt>sanity_check
+
+This method is executed after C<startup>, but before the application
+actually starts with the L<start|Clustericious::Command::start> command.
+If it returns 1 then the configuration is considered sane and the 
+application will start.  If it returns 0 then the configuration has
+problems and start will be aborted with an appropriate message to the user
+attempting start.
+
+By default this just checks that the application's configuration file
+(usually located in ~/etc/MyApp.conf) is correctly formatted as either
+YAML or JSON.
+
+You can override this in your application, but don't forget to call
+the base class's version of sanity_check before making your own checks.
+
 =head1 SEE ALSO
 
 L<Clustericious>
 
+=head1 AUTHOR
+
+original author: Brian Duggan
+
+current maintainer: Graham Ollis <plicease@cpan.org>
+
+contributors:
+
+Curt Tilmes
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2013 by NASA GSFC.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
 =cut
+

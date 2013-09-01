@@ -1,49 +1,79 @@
-#!/usr/bin/env perl
 
 use strict;
 use warnings;
-use Module::Build;
 
-my $builder = Module::Build->new(
-    module_name         => 'Clustericious',
-    license             => 'perl',
-    dist_author         => q{Brian Duggan <brian.duggan@nasa.gov>},
-    dist_version_from   => 'lib/Clustericious.pm',
-    dist_abstract       => 'Mojo and HTTP based cluster framework',
-    configure_requires => { 'Module::Build' => 0.40 },
-    build_requires => {
-        'Clustericious::Config' => '0.17',
-        'Module::Build'        => '0.36',
-        'Test::More'           => 0,
-        'MojoX::Log::Log4perl' => 0,
-        'Clustericious::Log'   => '0.14',
-        'Mojolicious'          => '3.85',
-        'Sub::Exporter'        => 0,
-        'JSON::XS'             => 0,
-        'YAML::XS'             => 0,
-        'List::MoreUtils'      => 0,
-        'File::ShareDir'       => 0,
-        'Hash::Merge'          => 0,
-        'File::Slurp'          => 0,
-        'Sys::Hostname'        => 0,
-        'IO::Scalar'           => 0,
-        'File::HomeDir'        => 0,
-        'File::HomeDir::Test'  => 0,
-        'PlugAuth::Lite'       => '0.05',
-      },
-    add_to_cleanup      => [ 'Clustericious-*' ],
-    #create_makefile_pl => 'traditional',
-    share_dir => 'share',
-    meta_merge => {
-        no_index => { directory => [ 'share', 'util' ], },
-        resources => {
-            bugtracker => 'https://github.com/plicease/Clustericious/issues',
-            homepage   => "http://perl.wdlabs.com/Clustericious",
-            repository => 'git://github.com/plicease/Clustericious.git',
-        }
-    }
+use Module::Build 0.3601;
+
+
+my %module_build_args = (
+  "build_requires" => {
+    "File::HomeDir::Test" => 0,
+    "File::Temp" => 0,
+    "IO::Scalar" => 0,
+    "Module::Build" => "0.3601",
+    "PlugAuth::Lite" => 0,
+    "Test::Clustericious::Cluster" => "0.09",
+    "Test::Clustericious::Config" => 0,
+    "Test::PlugAuth" => 0,
+    "autodie" => 0
+  },
+  "configure_requires" => {
+    "Module::Build" => "0.3601"
+  },
+  "dist_abstract" => "A framework for RESTful processing systems.",
+  "dist_author" => [
+    "Graham Ollis <plicease\@cpan.org>"
+  ],
+  "dist_name" => "Clustericious",
+  "dist_version" => "0.9930",
+  "license" => "perl",
+  "module_name" => "Clustericious",
+  "recommends" => {},
+  "recursive_test_files" => 1,
+  "requires" => {
+    "Carp" => 0,
+    "Clustericious::Config" => "0.25",
+    "Clustericious::Log" => "0.14",
+    "Cwd" => 0,
+    "Data::Dumper" => 0,
+    "File::Basename" => 0,
+    "File::Find" => 0,
+    "File::HomeDir" => 0,
+    "File::Path" => 0,
+    "File::ShareDir" => 0,
+    "File::Slurp" => 0,
+    "JSON::XS" => 0,
+    "List::MoreUtils" => 0,
+    "List::Util" => 0,
+    "Log::Log4perl" => 0,
+    "Mojo::Base" => 0,
+    "Mojo::ByteStream" => 0,
+    "Mojo::JSON" => 0,
+    "Mojo::Server::Hypnotoad" => 0,
+    "Mojo::Server::PSGI" => 0,
+    "Mojo::URL" => 0,
+    "Mojo::UserAgent" => 0,
+    "MojoX::Log::Log4perl" => 0,
+    "Mojolicious" => "3.85",
+    "Mojolicious::Controller" => 0,
+    "Mojolicious::Plugin" => 0,
+    "Mojolicious::Renderer" => 0,
+    "Path::Class" => 0,
+    "PlugAuth::Lite" => "0.05",
+    "Scalar::Util" => 0,
+    "Sub::Exporter" => 0,
+    "Sys::Hostname" => 0,
+    "Test::Mojo" => 0,
+    "Test::More" => 0,
+    "YAML::XS" => 0,
+    "perl" => "v5.10.0"
+  },
+  "script_files" => [
+    "bin/clustericious"
+  ]
 );
 
-$builder->create_build_script();
 
-1;
+my $build = Module::Build->new(%module_build_args);
+
+$build->create_build_script;

@@ -3,35 +3,9 @@ package Test::Clustericious;
 use strict;
 use warnings;
 
-our $VERSION = '0.9929';
+# ABSTRACT: Test Clustericious apps
+our $VERSION = '0.9930'; # VERSION
 
-=head1 NAME
-
-Test::Clustericious - Test Clustericious apps
-
-=head1 SYNOPSIS
-
- use Test::Clustericious;
-
- my $t = Test::Clustericious->new(app => 'SomeMojoApp');
- my $t = Test::Clustericious->new(server => 'myapp');
- my $t = Test::Clustericious->new(server_url => 'http://foo');
-
- my $obj = $t->create_ok('/my/url', { my => 'object' }); # 2 tests
-
- my $obj = $t->retrieve_ok('/url/id'); # 2 tests, returns decoded object
-
- $t->update_ok('/url/id', { my => 'object' }); # 2 tests
-
- $t->remove_ok('/url/id'); # 6 tests: deletes, then gets to verify gone
-
-=head1 DESCRIPTION
-
-L<Test::Clustericious> is a collection of testing helpers for everyone
-developing L<Clustericious> applications.  It inherits from
-L<Test::Mojo>, and add the following new attributes and methods.
-
-=cut
 
 use base 'Test::Mojo';
 
@@ -44,35 +18,10 @@ use Clustericious::Config;
 
 require Test::More;
 
-=head1 ATTRIBUTES
-
-=head2 C<server>
-
- my $t = Test::Clustericious->new(server => 'MyServer');
-
-Looks up the URL for the server in the config file for the
-specified server.
-
-=head2 C<server_url>
-
- my $t = Test::Clustericious->new(server_url => 'http://foo/');
-
-Explicitly define a server url to test against.
-
-=cut
 
 __PACKAGE__->attr('server');
 __PACKAGE__->attr('server_url');
 
-=head1 METHODS
-
-=head2 C<new>
-
- my $t = Test::Clustericious(app => 'SomeMojoApp');
- my $t = Test::Clustericious(server => 'myapp');
- my $t = Test::Clustericious(server_url => 'http://foo'); 
-
-=cut
 
 sub new
 {
@@ -96,15 +45,6 @@ sub new
     return $self;
 }
 
-=head2 C<testdata>
-
- my $object = $t->testdata('filename');
-
-Looks for filename, filename.json, filename.yaml in 't', 'data' or
-'t/data' directories.  Parses with json or yaml if appropriate, then
-returns the object.
-
-=cut
 
 sub testdata
 {
@@ -135,17 +75,6 @@ sub _url
     return $server_url . $url;
 }
 
-=head2 C<decoded_body>
-
- $obj = $t->decoded_body;
-
-Returns the body from the last request, parsing with JSON if
-Content-Type is application/json.
-
-Returns undef if the parse fails or the last request wasn't status
-2xx.
-
-=cut 
 
 sub decoded_body
 {
@@ -164,24 +93,6 @@ sub decoded_body
     return $res->is_status_class(200) ? $body : undef;
 }
 
-=head2 C<create_ok>
-
- $obj = $t->create_ok('/url', { some => 'object' });
- $obj = $t->create_ok('/url', 'filename');
- $t->create_ok('/url', <many/files*>);
-
-if called with a filename, loads the object from the file as
-described in testdata().
-
-Uses POST to the url to create the object, encoded with JSON.
-Checks for status 200 and returns the decoded body.
-
-You can also create multiple objects/files at once, but then there is
-no returned object.
-
-This counts as 2 TAP tests.
-
-=cut
 
 sub create_ok
 {
@@ -208,23 +119,9 @@ sub create_ok
          ->decoded_body;
 }
 
-=head2 C<update_ok>
-
- update_ok is really just an alias for create_ok
-
-=cut
 
 sub update_ok { create_ok(@_) }
 
-=head2 C<retrieve_ok>
-
- $obj = $t->retrieve_ok('/url');
-
-GETs the url, checks for status 200, and returns the decoded body.
-
-This counts as 2 TAP tests.
-
-=cut
 
 sub retrieve_ok
 {
@@ -239,16 +136,6 @@ sub retrieve_ok
     return $self->decoded_body;
 }
 
-=head2 C<remove_ok>
-
- $t->remove_ok($url);
-
-DELETEs the url, checks for status 200 and content of 'ok'.  Then
-does a GET of the same url and checks for not found.
-
-This counts as 6 TAP tests.
-
-=cut
 
 sub remove_ok
 {
@@ -263,16 +150,6 @@ sub remove_ok
          ->notfound_ok($url);
 }
 
-=head2 C<notfound_ok>
-
- $t->notfound_ok($url[, $object]);
-
-GETs the url, or if $object specified, POSTs the encoded object
-and checks for a 404 response code and "not found" or "null".
-
-This counts as 3 TAP tests.
-
-=cut
 
 sub notfound_ok
 {
@@ -295,14 +172,6 @@ sub notfound_ok
          ->content_like(qr/(Not found|null)/i, "$url content is null or Not Found");
 }
 
-=head2 C<truncate_ok>
-
- $t->truncate_ok($url);
-
-GETs the URL, which should return a list of keys, then iterates
-over the list and delete_ok() each one.
-
-=cut
 
 # Should probably do this directly on the server side for speed,
 # but this way is fun..
@@ -327,10 +196,160 @@ sub truncate_ok
 
 1;
 
-__END__
+
+
+=pod
+
+=head1 NAME
+
+Test::Clustericious - Test Clustericious apps
+
+=head1 VERSION
+
+version 0.9930
+
+=head1 SYNOPSIS
+
+ use Test::Clustericious;
+
+ my $t = Test::Clustericious->new(app => 'SomeMojoApp');
+ my $t = Test::Clustericious->new(server => 'myapp');
+ my $t = Test::Clustericious->new(server_url => 'http://foo');
+
+ my $obj = $t->create_ok('/my/url', { my => 'object' }); # 2 tests
+
+ my $obj = $t->retrieve_ok('/url/id'); # 2 tests, returns decoded object
+
+ $t->update_ok('/url/id', { my => 'object' }); # 2 tests
+
+ $t->remove_ok('/url/id'); # 6 tests: deletes, then gets to verify gone
+
+=head1 DESCRIPTION
+
+L<Test::Clustericious> is a collection of testing helpers for everyone
+developing L<Clustericious> applications.  It inherits from
+L<Test::Mojo>, and add the following new attributes and methods.
+
+=head1 ATTRIBUTES
+
+=head2 C<server>
+
+ my $t = Test::Clustericious->new(server => 'MyServer');
+
+Looks up the URL for the server in the config file for the
+specified server.
+
+=head2 C<server_url>
+
+ my $t = Test::Clustericious->new(server_url => 'http://foo/');
+
+Explicitly define a server url to test against.
+
+=head1 METHODS
+
+=head2 C<new>
+
+ my $t = Test::Clustericious(app => 'SomeMojoApp');
+ my $t = Test::Clustericious(server => 'myapp');
+ my $t = Test::Clustericious(server_url => 'http://foo'); 
+
+=head2 C<testdata>
+
+ my $object = $t->testdata('filename');
+
+Looks for filename, filename.json, filename.yaml in 't', 'data' or
+'t/data' directories.  Parses with json or yaml if appropriate, then
+returns the object.
+
+=head2 C<decoded_body>
+
+ $obj = $t->decoded_body;
+
+Returns the body from the last request, parsing with JSON if
+Content-Type is application/json.
+
+Returns undef if the parse fails or the last request wasn't status
+2xx.
+
+=head2 C<create_ok>
+
+ $obj = $t->create_ok('/url', { some => 'object' });
+ $obj = $t->create_ok('/url', 'filename');
+ $t->create_ok('/url', <many/files*>);
+
+if called with a filename, loads the object from the file as
+described in testdata().
+
+Uses POST to the url to create the object, encoded with JSON.
+Checks for status 200 and returns the decoded body.
+
+You can also create multiple objects/files at once, but then there is
+no returned object.
+
+This counts as 2 TAP tests.
+
+=head2 C<update_ok>
+
+ update_ok is really just an alias for create_ok
+
+=head2 C<retrieve_ok>
+
+ $obj = $t->retrieve_ok('/url');
+
+Makes a GET request on the url, checks for status 200, and returns the 
+decoded body.
+
+This counts as 2 TAP tests.
+
+=head2 C<remove_ok>
+
+ $t->remove_ok($url);
+
+Makes a DELETE request on the url, checks for status 200 and content of 
+'ok'.  Then does a GET of the same url and checks for not found.
+
+This counts as 6 TAP tests.
+
+=head2 C<notfound_ok>
+
+ $t->notfound_ok($url[, $object]);
+
+Makes a GET request on the url, or if $object specified, a POST request 
+the encoded object and checks for a 404 response code and "not found" or 
+"null".
+
+This counts as 3 TAP tests.
+
+=head2 C<truncate_ok>
+
+ $t->truncate_ok($url);
+
+Makes a GET request the URL, which should return a list of keys, then 
+iterates over the list and delete_ok() each one.
 
 =head1 SEE ALSO
 
 L<Clustericious>
 
+=head1 AUTHOR
+
+original author: Brian Duggan
+
+current maintainer: Graham Ollis <plicease@cpan.org>
+
+contributors:
+
+Curt Tilmes
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2013 by NASA GSFC.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
 =cut
+
+
+__END__
+

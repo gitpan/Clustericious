@@ -1,78 +1,16 @@
 package Clustericious::Plugin::PlugAuth;
 
+use strict;
+use warnings;
 use Clustericious::Log;
 use Mojo::ByteStream qw/b/;
 use Mojo::URL;
-
 use Clustericious::Config;
 use Mojo::Base 'Mojolicious::Plugin';
 
-use warnings;
-use strict;
+# ABSTRACT: Plugin for clustericious to use PlugAuth.
+our $VERSION = '0.9930'; # VERSION
 
-our $VERSION = '0.9929';
-
-=head1 NAME
-
-Clustericious::Plugin::PlugAuth - Plugin for clustericious to use PlugAuth.
-
-=head1 SYNOPSIS
-
-SimpleApp.conf:
-
- {"plug_auth":{"url":"http://plugauthserver:3000"}}
-
-Application:
-
- package SimpleApp;
- 
- use base qw( Clustericious::App );
- 
- sub startup {
-   my $self = shift;
-   $self->SUPER::startup(@_);
-   # done by default for all clustericious applications.
-   #$self->plugin('plug_auth');
- }
- 
- package SimpleApp::Routes;
- 
- use Clustericious::RouteBuilder;
-
- # unprotected 
- get '/public' => 'unprotected';
- 
- # require PlugAuth username/password
- authenticate; 
- get '/private1' => 'protected';
- 
- # protected by PlugAuth an explicit realm
- autheticate 'realm';
- get '/private2' => 'realm protected';
- 
- # check for permissions to do $action on $resource
- authorize 'action', 'resource';
- get '/restricted1' => 'authz_restricted';
- 
- # check for premissions to do $action on the resource /restricted2
- authorize 'action';
- get '/restricted2';
- 
- # HTTP method as the $action and /http_method_get as the resource
- authorize '<method>';
- get '/http_method_get';
-
- # HTTP method as the $action and "/prefix/http_method_with_prefix"
- # as the resource.
- authorize '<method>', '/myprefix/<path>';
- get '/http_method_with_prefix';
-
-=head1 DESCRIPTION
-
-This provides authenticate and authorize methods which can be called from your applications
-Route class.
-
-=cut
 
 has 'config_url';
 
@@ -86,14 +24,6 @@ sub register {
     $self;
 }
 
-=head1 METHODS
-
-=head2 authenticate [ $realm ]
-
-Require username and password authentication, optionally with a realm.
-If a realm is not provided, '' is used.
-
-=cut
 
 sub authenticate {
     my $self = shift;
@@ -173,12 +103,6 @@ sub authenticate {
     return 0;
 }
 
-=head2 authorize [$action, [$resource]]
-
-Require the authenticated user have the authorization to perform
-the given action on the given resource.
-
-=cut
 
 sub authorize {
     my $self = shift;
@@ -201,10 +125,114 @@ sub authorize {
     return 0;
 }
 
+
+1;
+
+__END__
+=pod
+
+=head1 NAME
+
+Clustericious::Plugin::PlugAuth - Plugin for clustericious to use PlugAuth.
+
+=head1 VERSION
+
+version 0.9930
+
+=head1 SYNOPSIS
+
+MyApp.conf:
+
+ {"plug_auth":{"url":"http://plugauthserver:3000"}}
+
+Application:
+
+ package MyApp;
+ 
+ use base qw( Clustericious::App );
+ 
+ sub startup {
+   my $self = shift;
+   $self->SUPER::startup(@_);
+   # done by default for all clustericious applications.
+   #$self->plugin('plug_auth');
+ }
+ 
+ package MyApp::Routes;
+ 
+ use Clustericious::RouteBuilder;
+
+ # unprotected 
+ get '/public' => 'unprotected';
+ 
+ # require PlugAuth username/password
+ authenticate; 
+ get '/private1' => 'protected';
+ 
+ # protected by PlugAuth an explicit realm
+ autheticate 'realm';
+ get '/private2' => 'realm protected';
+ 
+ # check for permissions to do $action on $resource
+ authorize 'action', 'resource';
+ get '/restricted1' => 'authz_restricted';
+ 
+ # check for premissions to do $action on the resource /restricted2
+ authorize 'action';
+ get '/restricted2';
+ 
+ # HTTP method as the $action and /http_method_get as the resource
+ authorize '<method>';
+ get '/http_method_get';
+
+ # HTTP method as the $action and "/prefix/http_method_with_prefix"
+ # as the resource.
+ authorize '<method>', '/myprefix/<path>';
+ get '/http_method_with_prefix';
+
+=head1 DESCRIPTION
+
+This provides authenticate and authorize methods which can be called from your applications
+Route class.
+
+=head1 ATTRIBUTES
+
+=head2 config_url
+
+The URL of the PlugAuth server to authenticate against.
+
+=head1 METHODS
+
+=head2 authenticate [ $realm ]
+
+Require username and password authentication, optionally with a realm.
+If a realm is not provided, '' is used.
+
+=head2 authorize [$action, [$resource]]
+
+Require the authenticated user have the authorization to perform
+the given action on the given resource.
+
 =head1 SEE ALSO
 
 L<PlugAuth>, L<Clustericious>
 
+=head1 AUTHOR
+
+original author: Brian Duggan
+
+current maintainer: Graham Ollis <plicease@cpan.org>
+
+contributors:
+
+Curt Tilmes
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2013 by NASA GSFC.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
 =cut
 
-1;

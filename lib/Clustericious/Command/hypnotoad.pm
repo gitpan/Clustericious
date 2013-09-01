@@ -1,46 +1,8 @@
-=head1 NAME
-
-Clustericious::Command::hypnotoad - Clustericious command to stat Hypnotoad
-
-=head1 SYNOPSIS
-
-in your application configuration (C<~/etc/YourApp.conf>)
-
- ---
- start_mode : "hypnotoad"
- hypnotoad:
-    workers : 1
-        listen :
-            - "http://*:3000"
-    inactivity_timeout : 50
-    pid_file : /tmp/minionrelay.pid
-
-then at the command line:
-
- % yourapp start
-
-=head1 DESCRIPTION
-
-Start a hypnotoad webserver.
-
-Configuration for the server is taken directly from the
-"hypnotoad" entry in the config file, and turned into
-a config file for hypnotoad.
-
-=head1 SUPER CLASS
-
-L<Clustericious::Command>
-
-=head1 SEE ALSO
-
-L<Clustericious>
-L<Mojo::Server::Hypnotoad>,
-
-=cut
-
 package Clustericious::Command::hypnotoad;
-use Clustericious::Log;
 
+use strict;
+use warnings;
+use Clustericious::Log;
 use Clustericious::App;
 use Clustericious::Config;
 use Mojo::Server::Hypnotoad;
@@ -49,10 +11,9 @@ use File::Slurp qw/slurp/;
 use Cwd qw/getcwd abs_path/;
 use base 'Clustericious::Command';
 
-use strict;
-use warnings;
+# ABSTRACT: Clustericious command to stat Hypnotoad
+our $VERSION = '0.9930'; # VERSION
 
-our $VERSION = '0.9929';
 
 __PACKAGE__->attr(description => "Start a hypnotad web server.\n");
 
@@ -103,4 +64,69 @@ sub run {
 }
 
 1;
+
+
+__END__
+=pod
+
+=head1 NAME
+
+Clustericious::Command::hypnotoad - Clustericious command to stat Hypnotoad
+
+=head1 VERSION
+
+version 0.9930
+
+=head1 SYNOPSIS
+
+in your application configuration (C<~/etc/YourApp.conf>)
+
+ ---
+ start_mode : "hypnotoad"
+ hypnotoad:
+    workers : 1
+        listen :
+            - "http://*:3000"
+    inactivity_timeout : 50
+    pid_file : /tmp/minionrelay.pid
+
+then at the command line:
+
+ % yourapp start
+
+=head1 DESCRIPTION
+
+Start a hypnotoad web server.
+
+Configuration for the server is taken directly from the
+"hypnotoad" entry in the config file, and turned into
+a config file for hypnotoad.
+
+=head1 SUPER CLASS
+
+L<Clustericious::Command>
+
+=head1 SEE ALSO
+
+L<Clustericious>
+L<Mojo::Server::Hypnotoad>,
+
+=head1 AUTHOR
+
+original author: Brian Duggan
+
+current maintainer: Graham Ollis <plicease@cpan.org>
+
+contributors:
+
+Curt Tilmes
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2013 by NASA GSFC.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
 

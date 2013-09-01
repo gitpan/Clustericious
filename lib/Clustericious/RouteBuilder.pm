@@ -1,33 +1,13 @@
 package Clustericious::RouteBuilder;
+
 use strict;
 use warnings;
 use v5.10;
 use Log::Log4perl qw( :easy );
 
-=head1 NAME
+# ABSTRACT: Route builder for Clustericious applications
+our $VERSION = '0.9930'; # VERSION
 
-Clustericious::RouteBuilder - Route builder for Clustericious applications
-
-=head1 SYNOPSIS
-
- use Clustericious::RouteBuilder;
-
-=head1 DESCRIPTION
-
-This class provides an interface for creating routes for Clustericious
-applications, which was forked from L<Mojolicious::Lite> some time ago.
-
-=head1 SUPER CLASS
-
-none
-
-=head1 SEE ALSO
-
-L<Clustericious>, L<Mojolicious::Lite>
-
-=cut
-
-our $VERSION = '0.9929';
 
 our %Routes;
 
@@ -123,7 +103,7 @@ sub import {
     *{"${caller}::authorize"}    = sub { $route_sub->('authorize',@_) };
 }
 
-sub add_routes {
+sub _add_routes {
     my $class = shift;
     my $app = shift;
     my $auth_plugin = shift;
@@ -196,4 +176,101 @@ sub add_routes {
 }
 
 1;
+
+
+__END__
+=pod
+
+=head1 NAME
+
+Clustericious::RouteBuilder - Route builder for Clustericious applications
+
+=head1 VERSION
+
+version 0.9930
+
+=head1 SYNOPSIS
+
+ package MyApp;
+ 
+ use Mojo::Base qw( Clustericious::App );
+ 
+ package MyApp::Routes;
+
+ use Clustericious::RouteBuilder;
+ 
+ get '/' => sub { shift->render(text => 'welcome to myapp') };
+
+=head1 DESCRIPTION
+
+This module provides a simplified interface for creating routes for your 
+L<Clustericious> application.  To use it, create a Routes.pm that lives 
+directly under your application's namespace (for example above MyApp's 
+route module is MyApp::Routes).  The interface is reminiscent of 
+L<Mojolicious::Lite>, because it was forked from there some time ago.
+
+=head1 SUPER CLASS
+
+none
+
+=head1 METHODS
+
+=head2 any
+
+Define an HTTP route that matches any HTTP command verb.
+
+=head2 get
+
+Define an HTTP GET route
+
+=head2 head
+
+Define an HTTP HEAD route
+
+=head2 post
+
+Define an HTTP POST route
+
+=head2 put
+
+Define an HTTP PUT route
+
+=head2 del
+
+Define an HTTP DELETE route.
+
+=head2 websocket
+
+Define a Websocket route.
+
+=head2 authenticate
+
+Require authentication for all subsequent routes.
+
+=head2 authorize [ $action ]
+
+Require specific authorization for all subsequent routes.
+
+=head1 SEE ALSO
+
+L<Clustericious>, L<Mojolicious::Lite>
+
+=head1 AUTHOR
+
+original author: Brian Duggan
+
+current maintainer: Graham Ollis <plicease@cpan.org>
+
+contributors:
+
+Curt Tilmes
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2013 by NASA GSFC.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
 

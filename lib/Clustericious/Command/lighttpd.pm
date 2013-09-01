@@ -1,36 +1,15 @@
-=head1 NAME
-
-Clustericious::Command::lighttpd - Clustericious command to stat lighttpd
-
-=head1 SYNOPSIS
-
- % yourapp start
-
-=head1 DESCRIPTION
-
-Start a lighttpd web server.
- 
-=head1 SUPER CLASS
-
-L<Clustericious::Command>
-
-=head1 SEE ALSO
-
-L<Clustericious>
-
-=cut
-
 package Clustericious::Command::lighttpd;
-use Clustericious::Log;
 
+use strict;
+use warnings;
+use Clustericious::Log;
 use Clustericious::App;
 use Clustericious::Config;
 use base 'Clustericious::Command';
 
-use strict;
-use warnings;
+# ABSTRACT: Clustericious command to stat lighttpd
+our $VERSION = '0.9930'; # VERSION
 
-our $VERSION = '0.9929';
 
 __PACKAGE__->attr(description => <<EOT);
 Start a lighttpd web server.
@@ -59,4 +38,51 @@ sub run {
 
 1;
 
+
+
+__END__
+=pod
+
+=head1 NAME
+
+Clustericious::Command::lighttpd - Clustericious command to stat lighttpd
+
+=head1 VERSION
+
+version 0.9930
+
+=head1 SYNOPSIS
+
+ % yourapp start
+
+=head1 DESCRIPTION
+
+Start a lighttpd web server.
+
+=head1 SUPER CLASS
+
+L<Clustericious::Command>
+
+=head1 SEE ALSO
+
+L<Clustericious>
+
+=head1 AUTHOR
+
+original author: Brian Duggan
+
+current maintainer: Graham Ollis <plicease@cpan.org>
+
+contributors:
+
+Curt Tilmes
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2013 by NASA GSFC.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
 

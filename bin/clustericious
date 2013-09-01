@@ -2,14 +2,25 @@
 
 use strict;
 use warnings;
-
 use Clustericious::Commands;
 
+# PODNAME: clustericious
+# ABSTRACT: Clustericious command runner
+our $VERSION = '0.9930'; # VERSION
+
+
 Clustericious::Commands->start;
+
+__END__
+=pod
 
 =head1 NAME
 
 clustericious - Clustericious command runner
+
+=head1 VERSION
+
+version 0.9930
 
 =head1 SYNOPSIS
 
@@ -28,4 +39,22 @@ commands, see L<Clustericious::Command>.
 
 L<Clustericious>, L<Clustericious::Command>
 
+=head1 AUTHOR
+
+original author: Brian Duggan
+
+current maintainer: Graham Ollis <plicease@cpan.org>
+
+contributors:
+
+Curt Tilmes
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2013 by NASA GSFC.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
 =cut
+

@@ -5,9 +5,44 @@ use warnings;
 use v5.10;
 use Mojo::Base 'Clustericious::Command';
 
+# ABSTRACT: Test a Clustericious application's configuration
+our $VERSION = '0.9930'; # VERSION
+
+
+has description => <<EOT;
+load configuration and test for errors
+EOT
+
+has usage => <<EOT;
+usage $0: configtest
+load configuration and test for errors
+EOT
+
+sub run
+{
+  my $self = shift;
+  my @args = @_ ? @_ : @ARGV;
+  
+  my $app = $self->app;
+  
+  exit 2 unless $app->sanity_check;
+  
+  say 'config okay';
+}
+
+1;
+
+
+__END__
+=pod
+
 =head1 NAME
 
 Clustericious::Command::configtest - Test a Clustericious application's configuration
+
+=head1 VERSION
+
+version 0.9930
 
 =head1 SYNOPSIS
 
@@ -33,7 +68,7 @@ Your app:
  1;
 
 do a sanity check of the configuration:
- 
+
  % yourapp configtest
 
 =head1 DESCRIPTION
@@ -49,30 +84,22 @@ L<Clustericious::Command>
 
 L<Clustericious>
 
+=head1 AUTHOR
+
+original author: Brian Duggan
+
+current maintainer: Graham Ollis <plicease@cpan.org>
+
+contributors:
+
+Curt Tilmes
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2013 by NASA GSFC.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
 =cut
-
-our $VERSION = '0.9929';
-
-has description => <<EOT;
-load configuration and test for errors
-EOT
-
-has usage => <<EOT;
-usage $0: configtest
-load configuration and test for errors
-EOT
-
-sub run
-{
-  my $self = shift;
-  my @args = @_ ? @_ : @ARGV;
-  
-  my $app = $self->app;
-  
-  exit 2 unless $app->sanity_check;
-  
-  say 'config okay';
-}
-
-1;
 

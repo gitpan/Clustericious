@@ -1,59 +1,18 @@
-=head1 NAME
-
-Clustericious::Command::stop - Clustericious command to stop a Clustericious application
-
-=head1 SYNOPSIS
-
- % yourapp stop
-
-=head1 DESCRIPTION
-
-Stop a running daemon.
-
-=head1 NOTES
-
-The different methods of starting put their pid files in
-different places in the config file.   Here are some
-examples :
-
-   "hypnotoad" : {
-      "pid_file"  : "/tmp/filename.pid",
-      ....
-    }
-
-   "plackup" : {
-      "pidfile"   : "/tmp/nother_filename.pid",
-      "daemonize" : "null"    # means include "--daemonize"
-   ...
-   },
-
-   "lighttpd" : {
-      "env" : {
-          "lighttpd_pid"    : "/tmp/third_filename.pid"
-           ...
-      },
-   },
-
-   "nginx" : {
-     '-p' : '/home/foo/appname/nginx'
-    }
-
-=cut
-
 package Clustericious::Command::stop;
+
+use strict;
+use warnings;
 use Clustericious::Log;
 use Clustericious::App;
 use Mojo::URL;
 use File::Basename qw/dirname/;
-
 use base 'Clustericious::Command';
 use Clustericious::Config;
 use File::Slurp qw/slurp/;
 
-use strict;
-use warnings;
+# ABSTRACT: Clustericious command to stop a Clustericious application
+our $VERSION = '0.9930'; # VERSION
 
-our $VERSION = '0.9929';
 
 __PACKAGE__->attr(description => <<EOT);
 Stop a running daemon.
@@ -150,4 +109,71 @@ sub run {
 }
 
 1;
+
+
+__END__
+=pod
+
+=head1 NAME
+
+Clustericious::Command::stop - Clustericious command to stop a Clustericious application
+
+=head1 VERSION
+
+version 0.9930
+
+=head1 SYNOPSIS
+
+ % yourapp stop
+
+=head1 DESCRIPTION
+
+Stop a running daemon.
+
+=head1 NOTES
+
+The different methods of starting put their pid files in
+different places in the config file.   Here are some
+examples :
+
+   "hypnotoad" : {
+      "pid_file"  : "/tmp/filename.pid",
+      ....
+    }
+
+   "plackup" : {
+      "pidfile"   : "/tmp/nother_filename.pid",
+      "daemonize" : "null"    # means include "--daemonize"
+   ...
+   },
+
+   "lighttpd" : {
+      "env" : {
+          "lighttpd_pid"    : "/tmp/third_filename.pid"
+           ...
+      },
+   },
+
+   "nginx" : {
+     '-p' : '/home/foo/appname/nginx'
+    }
+
+=head1 AUTHOR
+
+original author: Brian Duggan
+
+current maintainer: Graham Ollis <plicease@cpan.org>
+
+contributors:
+
+Curt Tilmes
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2013 by NASA GSFC.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
 

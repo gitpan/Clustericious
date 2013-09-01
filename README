@@ -1,136 +1,132 @@
+NAME
+    Clustericious - A framework for RESTful processing systems.
+
+VERSION
+    version 0.9930
+
+SYNOPSIS
+    Generate a new Clustericious application:
+
+     % clustericious generate app MyApp
+
+    Generate a new Clustericious application database schema:
+
+     % clustericious generate mbd_app MyApp --schema schema.sql
+
+    Basic application layout:
+
+     package MyApp;
+ 
+     use Mojo::Base qw( Clustericious::App );
+ 
+     sub startup
+     {
+       my($self) = @_;
+       # just like Mojolicious startup()
+     }
+ 
+     package MyApp::Routes;
+ 
+     use Clustericious::RouteBuilder;
+ 
+     # Mojolicious::Lite style routing
+     get '/' => sub { shift->render(text => 'welcome to myapp') };
+
+    Basic testing for Clustericious application:
+
+     use Test::Clustericious::Cluster;
+     use Test::More tests => 4;
+ 
+     # see Test::Clustericious::Cluster for more details
+     # and examples.
+     my $cluster = Test::Clustericious::Cluster->new;
+     $cluster->create_cluster_ok('MyApp');    # 1
+ 
+     my $url = $cluster->url;
+     my $t   = $cluster->t;   # Test::Mojo object
+ 
+     $t->get_ok("$url/")                      # 2
+       ->status_is(200)                       # 3
+       ->content_is('welcome to myapp');      # 4
+ 
+     __DATA__
+ 
+     @ etc/MyApp.conf
+     ---
+     url: <%= cluster->url %>
 
 DESCRIPTION
+    Clustericious is a web application framework designed to create
+    HTTP/RESTful web services that operate on a cluster, where each service
+    does one thing and ideally does it well. The design goal is to allow for
+    easy deployment of applications. Clustericious is based on the
+    Mojolicious and borrows some ideas from Mojolicious::Lite
+    (Clustericious::RouteBuilder is based on Mojolicious::Lite routing).
 
-This is a framework based on Mojo, with easy syntax
-like Mojolicious::Lite, intended for making applications
-which are part of an HTTP-based cluster.
+    Two examples of Clustericious applications on CPAN are Yars the archive
+    server and PlugAuth the authentication server.
 
-When used with Rose::DB::Planter, Clustericious
-allows for the easy conversion of a database
-schema into a RESTful interface and a web
-frontend.
+FEATURES
+    Here are some of the distinctive aspects of Clustericious :
 
-EXAMPLE
+    *   Simplified route builder based on Mojolicious::Lite (see
+        Clustericious::RouteBuilder).
 
-Let's turn a database schema below into a RESTful
-web service with a web front end.
+    *   Provides a set of default routes (e.g. /status, /version, /api) for
+        consistent interaction with Clustericious services (see
+        Clustericious::RouteBuilder::Common).
 
-Step 1.  Make your schema :
+    *   Introspects the routes available and publishes the API as /api.
 
-    create table artist (
-        id serial primary key,
-        name varchar
-    );
+    *   Automatically handle different formats (YAML or JSON) depending on
+        request (see Clustericious::Plugin::AutodataHandler).
 
-    create table album (
-        id serial primary key,
-        artist integer references artist,
-        title varchar,
-        year integer
-    );
+    *   Interfaces with Clustericious::Client to allow easy creation of
+        clients.
 
-    create table song (
-        id serial primary key,
-        album integer references album(id),
-        title varchar,
-        length integer
-    );
+    *   Uses Clustericious::Config for configuration.
 
-    create table performance (
-        id serial primary key,
-        location varchar
-    );
+    *   Uses Clustericious::Log for logging.
 
-    create table song_performance (
-        song integer references song(id),
-        performance integer references performance (id),
-        primary key (song, performance)
-    );
+    *   Integrates with Module::Build::Database and Rose::Planter to provide
+        a basic RESTful CRUD interface to a database.
 
+    *   Provides 'stop' and 'start' commands, and high-level configuration
+        facilities for a variety of deployment options.
 
-Note we have several 1-many relationships and one
-many-many relationship.
+TODO
+    I am ramping up to a release candidate and a final release for 1.00.
+    Specific things that need to be completed for this task include (but are
+    not limited to):
 
-Save the above as schema.sql.
+    *   documentation tutorial for a non database app
 
-Step 2.
+    *   documentation tutorial for a Module::Build::Database / Rose::Planter
+        app (replacement for the existing README, which is broken)
 
-    clustericious generate mbd_app Musicrest --schema schema.sql
+    *   use SQLite for above instead of Postgres
 
-Now skip to step 7 if you just want to see it work.
+    *   documentation tutorial for migrating SQLite app to Postgres
 
-Step 4.  Try the test suite :
+    *   tool to generate part or all of a MyApp::Client from MyApp
 
-    cd Musicrest
-    perl Build.PL
-    ./Build
-    ./Build test
+    *   documentation tutorial for clients (Clustericious::Client)
 
-Step 5.  Add a test :
+NOTES
+    This is a beta release. The API is subject to change without notice.
 
-    cat > t/002_music.t
+AUTHOR
+    original author: Brian Duggan
 
-    #!/usr/bin/env perl
+    current maintainer: Graham Ollis <plicease@cpan.org>
 
-    use Test::More;
-    use Test::Clustericious;
-    use Test::MBD '-autostart';
+    contributors:
 
-    my $t = Test::Clustericious->new(app => 'Musicrest');
-    $t->create_ok( '/artist' => { name => 'Prince' } );
-    my $id = $t->tx->res->json->{id};
-    ok $id, "Added artist, id is $id";
-    $t->remove_ok( "/artist/$id" );
-    done_testing();
+    Curt Tilmes
 
-Step 6.  Run ./Build test to see it work.
+COPYRIGHT AND LICENSE
+    This software is copyright (c) 2013 by NASA GSFC.
 
-Step 7.  Prepare to distribute your application and schema.
-
-    ./Build dbdist
-    ./Build manifest
-    ./Build dist
-    # (and commit and tag)
-
-Step 8.  Install and configure
-
-    ./Build fakeinstall
-    ./Build dbfakeinstall
-
-    ./Build install
-    ./Build dbinstall
-
-Check the db that was installed :
-    psql --list
-    psql musicrestserver
-    \dt
-
-Step 9.  Configure
-
-    mkdir ~/etc
-    cp eg/*.conf ~/etc
-
-Step 10. Start it up
-
-    musicrest start
-
-Step 11.  Try it :
-
-    curl -v http://localhost:3000
-
-Now for some sample REST calls :
-
-Note for testing, you can use the server
-as a client, e.g. :
-    musicrest get -v /status
-
-    add an artist
-    add an album
-    add some songs
-    add a performance
-
-    get a list of artists
-    get the songs for an artist
-    get the performances by an artist
-
+    This is free software; you can redistribute it and/or modify it under
+    the same terms as the Perl 5 programming language system itself.
 

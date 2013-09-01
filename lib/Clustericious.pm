@@ -1,19 +1,89 @@
 package Clustericious;
 
+use strict;
+use warnings;
+
+# ABSTRACT: A framework for RESTful processing systems.
+our $VERSION = '0.9930'; # VERSION
+
+
+1;
+
+
+__END__
+=pod
+
 =head1 NAME
 
 Clustericious - A framework for RESTful processing systems.
 
-=head1 SYNPOSIS
+=head1 VERSION
 
- % clustericious generate mbd_app Myapp --schema schema.sql
+version 0.9930
+
+=head1 SYNOPSIS
+
+Generate a new Clustericious application:
+
+ % clustericious generate app MyApp
+
+Generate a new Clustericious application database schema:
+
+ % clustericious generate mbd_app MyApp --schema schema.sql
+
+Basic application layout:
+
+ package MyApp;
+ 
+ use Mojo::Base qw( Clustericious::App );
+ 
+ sub startup
+ {
+   my($self) = @_;
+   # just like Mojolicious startup()
+ }
+ 
+ package MyApp::Routes;
+ 
+ use Clustericious::RouteBuilder;
+ 
+ # Mojolicious::Lite style routing
+ get '/' => sub { shift->render(text => 'welcome to myapp') };
+
+Basic testing for Clustericious application:
+
+ use Test::Clustericious::Cluster;
+ use Test::More tests => 4;
+ 
+ # see Test::Clustericious::Cluster for more details
+ # and examples.
+ my $cluster = Test::Clustericious::Cluster->new;
+ $cluster->create_cluster_ok('MyApp');    # 1
+ 
+ my $url = $cluster->url;
+ my $t   = $cluster->t;   # Test::Mojo object
+ 
+ $t->get_ok("$url/")                      # 2
+   ->status_is(200)                       # 3
+   ->content_is('welcome to myapp');      # 4
+ 
+ __DATA__
+ 
+ @ etc/MyApp.conf
+ ---
+ url: <%= cluster->url %>
 
 =head1 DESCRIPTION
 
-Clustericious is a L<Mojo> based application framework, like (and inheriting
-much from) L<Mojolicious> and L<Mojolicious::Lite>.  Its design goal is to
-allow for easy development of applications which are part of an HTTP/RESTful
-processing cluster.
+Clustericious is a web application framework designed to create HTTP/RESTful
+web services that operate on a cluster, where each service does one thing 
+and ideally does it well.  The design goal is to allow for easy deployment
+of applications.  Clustericious is based on the L<Mojolicious> and borrows
+some ideas from L<Mojolicious::Lite> (L<Clustericious::RouteBuilder> is 
+based on L<Mojolicious::Lite> routing).
+
+Two examples of Clustericious applications on CPAN are L<Yars> the archive
+server and L<PlugAuth> the authentication server.
 
 =head1 FEATURES
 
@@ -23,12 +93,21 @@ Here are some of the distinctive aspects of Clustericious :
 
 =item *
 
-Provides a set of default routes (e.g. /status, /version, /api) for consistent
-interaction with L<Clustericious>-based processing nodes.
+Simplified route builder based on L<Mojolicious::Lite> (see L<Clustericious::RouteBuilder>).
 
 =item *
 
-Introspects the routes available and publishes the api as /api.
+Provides a set of default routes (e.g. /status, /version, /api) for consistent
+interaction with Clustericious services (see L<Clustericious::RouteBuilder::Common>).
+
+=item *
+
+Introspects the routes available and publishes the API as /api.
+
+=item *
+
+Automatically handle different formats (YAML or JSON) depending on request 
+(see L<Clustericious::Plugin::AutodataHandler>).
 
 =item *
 
@@ -55,13 +134,40 @@ facilities for a variety of deployment options.
 
 =back
 
-=cut
-
-our $VERSION = '0.9929';
-
 =head1 TODO
 
-Lots more documentation.
+I am ramping up to a release candidate and a final release for 1.00.
+Specific things that need to be completed for this task include
+(but are not limited to):
+
+=over 4
+
+=item *
+
+documentation tutorial for a non database app
+
+=item *
+
+documentation tutorial for a L<Module::Build::Database> / L<Rose::Planter> app 
+(replacement for the existing README, which is broken)
+
+=item *
+
+use SQLite for above instead of Postgres
+
+=item *
+
+documentation tutorial for migrating SQLite app to Postgres
+
+=item *
+
+tool to generate part or all of a MyApp::Client from MyApp
+
+=item *
+
+documentation tutorial for clients (L<Clustericious::Client>)
+
+=back
 
 =head1 NOTES
 
@@ -69,22 +175,20 @@ This is a beta release.  The API is subject to change without notice.
 
 =head1 AUTHOR
 
-Graham Ollis <plicease@cpan.org>
+original author: Brian Duggan
 
-Brian Duggan
+current maintainer: Graham Ollis <plicease@cpan.org>
+
+contributors:
 
 Curt Tilmes
 
-=head1 SEE ALSO
+=head1 COPYRIGHT AND LICENSE
 
-L<Clustericious::App>,
-L<Clustericious>,
-L<Clustericious::RouteBuilder::CRUD>,
-L<Clustericious::RouteBuilder::Search>,
-L<Clustericious::RouteBuilder::Common>
-L<Clustericious::Command::start>
+This software is copyright (c) 2013 by NASA GSFC.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
 =cut
-
-1;
 

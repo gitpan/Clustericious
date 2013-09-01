@@ -1,69 +1,16 @@
 package Clustericious::Plugin::AutodataHandler;
 
-=head1 NAME
-
-Clustericious::Plugin::AutodataHandler - Handle data types automatically
-
-=head1 SYNOPSIS
-
- package YourApp::Routes;
- 
- use Clustericious::RouteBuilder;
- 
- get '/some/route' => sub {
-   my $c = shift;
-   $c->{autodata} = { x => 1, y => 'hello, z => [1,2,3] };
- };
-
-=head1 DESCRIPTION
-
-Adds a renderer that automatically serializes that "autodata" in the
-stash into a format based on HTTP Accept and Content-Type headers.
-Also adds a helper called 'parse_autodata' that handles incoming data by
-Content-Type.
-
-Supports application/json, text/x-yaml and
-application/x-www-form-urlencoded (in-bound only).
-
-When parse_autodata is called from within a route like this:
-
- $self->parse_autodata;
-
-POSTed data is parsed according to the type in the 'Content-Type'
-header with the data left in stash->{autodata}.  It is also
-returned by the above call.
-
-If a route leaves data in stash->{autodata}, it is rendered by this
-handler, which chooses the type with the first acceptable type listed
-in the Accept header, the Content-Type header, or the default.  (By
-default, the default is application/json, but you can override that
-too).
-
-=head1 TODO
-
-more documentation
-
-handle XML with schemas
-
-handle RDF with templates
-
-Should I make this a 'helper' instead of a 'hook'?  Or just a normal
-function?
-
-=cut
-
 use strict;
 use warnings;
-
 use base 'Mojolicious::Plugin';
-
 use Mojo::ByteStream 'b';
 use JSON::XS;
 use YAML::XS qw/Dump Load/;
-
 use Clustericious::Log;
 
-our $VERSION = '0.9929';
+# ABSTRACT: Handle data types automatically
+our $VERSION = '0.9930'; # VERSION
+
 
 my $default_decode = 'application/x-www-form-urlencoded';
 my $default_encode = 'application/json';
@@ -175,3 +122,69 @@ sub _autodata_parse
 }
 
 1;
+
+__END__
+=pod
+
+=head1 NAME
+
+Clustericious::Plugin::AutodataHandler - Handle data types automatically
+
+=head1 VERSION
+
+version 0.9930
+
+=head1 SYNOPSIS
+
+ package YourApp::Routes;
+ 
+ use Clustericious::RouteBuilder;
+ 
+ get '/some/route' => sub {
+   my $c = shift;
+   $c->{autodata} = { x => 1, y => 'hello, z => [1,2,3] };
+ };
+
+=head1 DESCRIPTION
+
+Adds a renderer that automatically serializes that "autodata" in the
+stash into a format based on HTTP Accept and Content-Type headers.
+Also adds a helper called 'parse_autodata' that handles incoming data by
+Content-Type.
+
+Supports application/json, text/x-yaml and
+application/x-www-form-urlencoded (in-bound only).
+
+When parse_autodata is called from within a route like this:
+
+ $self->parse_autodata;
+
+POST data is parsed according to the type in the 'Content-Type'
+header with the data left in stash->{autodata}.  It is also
+returned by the above call.
+
+If a route leaves data in stash->{autodata}, it is rendered by this
+handler, which chooses the type with the first acceptable type listed
+in the Accept header, the Content-Type header, or the default.  (By
+default, the default is application/json, but you can override that
+too).
+
+=head1 AUTHOR
+
+original author: Brian Duggan
+
+current maintainer: Graham Ollis <plicease@cpan.org>
+
+contributors:
+
+Curt Tilmes
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2013 by NASA GSFC.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
+

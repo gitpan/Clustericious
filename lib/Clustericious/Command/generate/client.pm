@@ -2,37 +2,15 @@ package Clustericious::Command::generate::client;
 
 use strict;
 use warnings;
-
 use Mojo::Base 'Clustericious::Command';
-
 use File::Find;
 use File::Slurp 'slurp';
 use File::ShareDir 'dist_dir';
 use File::Basename qw/basename/;
 
-=head1 NAME
+# ABSTRACT: Clustericious command to generate a new Clustericious client
+our $VERSION = '0.9930'; # VERSION
 
-Clustericious::Command::generate::client - Clustericious command to generate a new Clustericious client
-
-=head1 SYNOPSIS
-
- % clustericious generate client Myapp
-
-=head1 DESCRIPTION
-
-This command generates a new Clustericious client with the given name.
-
-=head1 SUPER CLASS
-
-L<Clustericious::Command>
-
-=head1 SEE ALSO
-
-L<Clustericious>, L<Clustericious::Client>
-
-=cut
-
-our $VERSION = '0.9929';
 
 has description => <<'EOF';
 Generate Clustericious::Client-derived client.
@@ -41,13 +19,6 @@ EOF
 has usage => <<"EOF";
 usage: $0 generate client [SERVER APP NAME]
 EOF
-
-sub get_data
-{
-    my ($self, $data, $class) = @_;
-
-    return slurp($data);
-}
 
 sub _installfile
 {
@@ -90,3 +61,50 @@ sub run
 }
 
 1;
+
+__END__
+=pod
+
+=head1 NAME
+
+Clustericious::Command::generate::client - Clustericious command to generate a new Clustericious client
+
+=head1 VERSION
+
+version 0.9930
+
+=head1 SYNOPSIS
+
+ % clustericious generate client Myapp
+
+=head1 DESCRIPTION
+
+This command generates a new Clustericious client with the given name.
+
+=head1 SUPER CLASS
+
+L<Clustericious::Command>
+
+=head1 SEE ALSO
+
+L<Clustericious>, L<Clustericious::Client>
+
+=head1 AUTHOR
+
+original author: Brian Duggan
+
+current maintainer: Graham Ollis <plicease@cpan.org>
+
+contributors:
+
+Curt Tilmes
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2013 by NASA GSFC.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
+
